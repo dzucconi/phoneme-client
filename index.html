@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      .l-cell {
+        width: 100%;
+        height: 50%;
+        position: fixed;
+      }
+
+      .cell-editor {
+        top: 0;
+        left: 0;
+        position: absolute;
+      }
+        .cell-editor:after {
+          display: block;
+          content: " ";
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 4px;
+          margin-top: -2px;
+          background-color: #ccc;
+          border: 1px solid;
+          border-color: #eee transparent #aaa transparent;
+        }
+
+      .cell-stage {
+        bottom: 0;
+        left: 0;
+      }
+
+      textarea {
+        border: none;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        padding: 1em;
+        font-size: 12pt;
+        font-family: monospace;
+      }
+        textarea:focus {
+          outline: none;
+        }
+    </style>
+
+    <script>
+      (function() {
+        "use strict";
+
+        var Phonemes = {
+          initialize: function() {
+            var editor = document.getElementById('editor');
+
+            editor.onkeyup = function() {
+              console.log(editor.value);
+            }
+          }
+        };
+
+        document.addEventListener("DOMContentLoaded", Phonemes.initialize, false);
+      }());
+    </script>
+  </head>
+  
+  <body>
+    <div class="l-cell cell-editor">
+      <textarea id="editor" autofocus="true"></textarea>
+    </div>
+    
+    <div id="stage" class="l-cell cell-stage"></div>
+  </body>
+</html>
