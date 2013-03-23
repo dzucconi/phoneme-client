@@ -34,6 +34,10 @@
       this.$editor.on("keyup", periodicUpdate);
     },
 
+    wrap: function(words) {
+      return _.map(words, function(word){ return "<span class='word'>" + word.trim() + "</span>"; });
+    },
+
     update: function() {
       var context = Phonemes;
 
@@ -42,10 +46,10 @@
       $.ajax({
         url: context.apiRoot,
         method: "POST",
-        data: { text: context.$editor.val() },
-        crossDomain: true
+        data: { text: context.$editor.val() }
       }).done(function(response) {
-        context.$output.html(response.text.split("|").join(context.wordSeparator));
+        var fragment = context.wrap(response.text.split("|"));
+        context.$output.html(fragment.join(context.wordSeparator));
       }).error(function(response){
         context.$output.html("ERROR");
       }).complete(function(){
@@ -54,15 +58,15 @@
     },
 
     initialize: function() {
-      this.apiRoot       = "http://api.corrasable.com/phonemes";
-      this.$editor       = $("#editor");
-      this.$output       = $("#output");
-      this.wordSeparator = " &hellip; ";
+      this.apiRoot = "http://api.corrasable.com/phonemes";
+      this.$editor = $("#editor");
+      this.$output = $("#output");
+      this.wordSeparator = " ";
 
       Loader.initialize();
       Phonemes.start();
     }
   };
 
-  $(function() { Phonemes.initialize() });
+  $(function() { Phonemes.initialize(); });
 }());
