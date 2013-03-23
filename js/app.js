@@ -39,22 +39,27 @@
     },
 
     update: function() {
-      var context = Phonemes;
+      var context = Phonemes,
+          message = context.$editor.val();
 
-      Loader.show();
+      if (message.trim() == "") {
+        context.$output.html("");
+      } else {
+        Loader.show();
 
-      $.ajax({
-        url: context.apiRoot,
-        method: "POST",
-        data: { text: context.$editor.val() }
-      }).done(function(response) {
-        var fragment = context.wrap(response.text.split("|"));
-        context.$output.html(fragment.join(context.wordSeparator));
-      }).error(function(response){
-        context.$output.html("ERROR");
-      }).complete(function(){
-        Loader.hide();
-      });
+        $.ajax({
+          url: context.apiRoot,
+          method: "POST",
+          data: { text: message }
+        }).done(function(response) {
+          var fragment = context.wrap(response.text.split("|"));
+          context.$output.html(fragment.join(context.wordSeparator));
+        }).error(function(response){
+          context.$output.html("ERROR");
+        }).complete(function(){
+          Loader.hide();
+        });
+      };
     },
 
     initialize: function() {
