@@ -1,136 +1,23 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <style>
-      * {
-        box-sizing: border-box;
-      }
-
-      html,
-      body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-
-      .loading-indicator {
-        position: fixed;
-        bottom: 1em;
-        right: 1em;
-        width: 2em;
-        height: 2em;
-        background-color: #000;
-        display: none;
-      }
-
-      .l-cell {
-        width: 100%;
-        height: 50%;
-        position: fixed;
-        padding: 1em;
-      }
-
-      .cell-editor {
-        top: 0;
-        left: 0;
-        position: absolute;
-      }
-        .cell-editor:after {
-          display: block;
-          content: " ";
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          width: 100%;
-          height: 4px;
-          margin-top: -2px;
-          border: 1px solid;
-          border-color: #ccc transparent #aaa transparent;
-          background-image: linear-gradient(bottom, #bbb 35%, #ddd 84%);
-          background-image: -o-linear-gradient(bottom, #bbb 35%, #ddd 84%);
-          background-image: -moz-linear-gradient(bottom, #bbb 35%, #ddd 84%);
-          background-image: -webkit-linear-gradient(bottom, #bbb 35%, #ddd 84%);
-          background-image: -ms-linear-gradient(bottom, #bbb 35%, #ddd 84%);
-          background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.35, #bbb), color-stop(0.84, #ddd));
-        }
-
-      .cell-stage {
-        bottom: 0;
-        left: 0;
-      }
-
-      textarea {
-        border: none;
-        margin: 0;
-        width: 100%;
-        height: 100%;
-        font-size: 12pt;
-        font-family: monospace;
-      }
-        textarea:focus {
-          outline: none;
-        }
-    </style>
+    <link href="css/app.css" rel="stylesheet" type="text/css">
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script>
-      (function() {
-        "use strict";
-
-        var Phonemes = {
-          start: function() {
-            var context = this;
-
-            this.editor.keyup(function() {
-              clearTimeout($.data(this, "timer"));
-
-              var wait = setTimeout(Phonemes.update.call(context), 1000);
-              
-              $(this).data("timer", wait);
-            });
-          },
-
-          update: function() {
-            var that = this,
-                text = that.editor.val();
-
-            $.ajax({
-              url: this.apiRoot,
-              method: "POST",
-              data: { text: text },
-              crossDomain: true
-            }).done(function(response) {
-              var translation = response.text.split("|").join(" &hellip; ");
-              that.stage.html(translation);
-            }).error(function(response){
-              that.stage.html("ERROR &hellip; ");
-            }).complete(function(){
-              that.loader.hide();
-            });
-          },
-
-          initialize: function() {
-            this.editor = $("#editor");
-            this.stage = $("#stage");
-            this.loader = $("#loader");
-            this.apiRoot = "http://www.corrasable.com/phonemes";
-
-            Phonemes.start();
-          }
-        };
-
-        $(function() { Phonemes.initialize() });
-      }());
-    </script>
+    <script src="js/underscore.min.js"></script>
+    <script src="js/spin.js"></script>
+    <script src="js/jquery.spin.js"></script>
+    <script src="js/app.js"></script>
   </head>
   
   <body>
-    <div id="loader" class="loading-indicator"></div>
-
     <div class="l-cell cell-editor">
       <textarea id="editor" autofocus="true" placeholder="Begin typing"></textarea>
     </div>
     
-    <div id="stage" class="l-cell cell-stage"></div>
+    <div id="stage" class="l-cell cell-stage">
+      <div id="loader" class="loading-indicator"></div>
+      <div id="output">
+    </div>
   </body>
 </html>
