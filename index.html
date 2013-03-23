@@ -13,10 +13,21 @@
         padding: 0;
       }
 
+      .loading-indicator {
+        position: fixed;
+        bottom: 1em;
+        right: 1em;
+        width: 2em;
+        height: 2em;
+        background-color: #000;
+        display: none;
+      }
+
       .l-cell {
         width: 100%;
         height: 50%;
         position: fixed;
+        padding: 1em;
       }
 
       .cell-editor {
@@ -33,9 +44,14 @@
           width: 100%;
           height: 4px;
           margin-top: -2px;
-          background-color: #ccc;
           border: 1px solid;
-          border-color: #eee transparent #aaa transparent;
+          border-color: #ccc transparent #aaa transparent;
+          background-image: linear-gradient(bottom, #bbb 35%, #ddd 84%);
+          background-image: -o-linear-gradient(bottom, #bbb 35%, #ddd 84%);
+          background-image: -moz-linear-gradient(bottom, #bbb 35%, #ddd 84%);
+          background-image: -webkit-linear-gradient(bottom, #bbb 35%, #ddd 84%);
+          background-image: -ms-linear-gradient(bottom, #bbb 35%, #ddd 84%);
+          background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.35, #bbb), color-stop(0.84, #ddd));
         }
 
       .cell-stage {
@@ -48,7 +64,6 @@
         margin: 0;
         width: 100%;
         height: 100%;
-        padding: 1em;
         font-size: 12pt;
         font-family: monospace;
       }
@@ -57,28 +72,52 @@
         }
     </style>
 
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script>
       (function() {
         "use strict";
 
         var Phonemes = {
           initialize: function() {
-            var editor = document.getElementById('editor');
+            var $editor       = $("#editor"),
+                $stage        = $("#stage"),
+                $loader       = $("#loader"),
+                apiRoot       = "http://www.corrasable.com/words/",
+                spaceKeyCode  = 32;
 
-            editor.onkeyup = function() {
-              console.log(editor.value);
-            }
+            $editor.on("keyup", function(e) {
+              if (e.keyCode == spaceKeyCode) {
+                var word = $editor.val().trim().split(" ").pop();
+
+                $loader.show();
+
+                $.ajax({
+                  url: apiRoot + word,
+                  crossDomain: true
+                }).done(function(response) {
+                  $stage.append(response.phonemes.join(" ") + " &hellip; ");
+                }).error(function(response){
+                  $stage.append("ERROR &hellip; ");
+                }).complete(function(){
+                  $loader.hide();
+                });
+
+                if (word == "") { $stage.html(""); }
+              };
+            });
           }
         };
 
-        document.addEventListener("DOMContentLoaded", Phonemes.initialize, false);
+        $(function() { Phonemes.initialize() });
       }());
     </script>
   </head>
   
   <body>
+    <div id="loader" class="loading-indicator"></div>
+
     <div class="l-cell cell-editor">
-      <textarea id="editor" autofocus="true"></textarea>
+      <textarea id="editor" autofocus="true" placeholder="Begin typing"></textarea>
     </div>
     
     <div id="stage" class="l-cell cell-stage"></div>
