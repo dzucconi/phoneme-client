@@ -31,7 +31,7 @@
     start: function() {
       var periodicUpdate = _.debounce(this.update, 150);
 
-      this.editor.on("keyup", periodicUpdate);
+      this.$editor.on("keyup", periodicUpdate);
     },
 
     update: function() {
@@ -42,12 +42,12 @@
       $.ajax({
         url: context.apiRoot,
         method: "POST",
-        data: { text: context.editor.val() },
+        data: { text: context.$editor.val() },
         crossDomain: true
       }).done(function(response) {
-        context.output.html(response.text.split("|").join(context.wordSeparator));
+        context.$output.html(response.text.split("|").join(context.wordSeparator));
       }).error(function(response){
-        context.output.html("ERROR" + context.wordSeparator);
+        context.$output.html("ERROR");
       }).complete(function(){
         Loader.hide();
       });
@@ -55,8 +55,8 @@
 
     initialize: function() {
       this.apiRoot       = "http://www.corrasable.com/phonemes";
-      this.editor        = $("#editor");
-      this.output        = $("#output");
+      this.$editor       = $("#editor");
+      this.$output       = $("#output");
       this.wordSeparator = " &hellip; ";
 
       Loader.initialize();
