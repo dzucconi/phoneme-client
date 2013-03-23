@@ -78,33 +78,44 @@
         "use strict";
 
         var Phonemes = {
-          initialize: function() {
-            var $editor       = $("#editor"),
-                $stage        = $("#stage"),
-                $loader       = $("#loader"),
-                apiRoot       = "http://www.corrasable.com/words/",
-                spaceKeyCode  = 32;
+          start: function() {
+            var context = this;
 
-            $editor.on("keyup", function(e) {
-              if (e.keyCode == spaceKeyCode) {
-                var word = $editor.val().trim().split(" ").pop();
+            this.editor.keyup(function() {
+              clearTimeout($.data(this, "timer"));
 
-                $loader.show();
-
-                $.ajax({
-                  url: apiRoot + word,
-                  crossDomain: true
-                }).done(function(response) {
-                  $stage.append(response.phonemes.join(" ") + " &hellip; ");
-                }).error(function(response){
-                  $stage.append("ERROR &hellip; ");
-                }).complete(function(){
-                  $loader.hide();
-                });
-
-                if (word == "") { $stage.html(""); }
-              };
+              var wait = setTimeout(Phonemes.update.call(context), 1000);
+              
+              $(this).data("timer", wait);
             });
+          },
+
+          update: function() {
+            var that = this,
+                text = that.editor.val();
+
+            $.ajax({
+              url: this.apiRoot,
+              method: "POST",
+              data: { text: text },
+              crossDomain: true
+            }).done(function(response) {
+              var translation = response.text.split("|").join(" &hellip; ");
+              that.stage.html(translation);
+            }).error(function(response){
+              that.stage.html("ERROR &hellip; ");
+            }).complete(function(){
+              that.loader.hide();
+            });
+          },
+
+          initialize: function() {
+            this.editor = $("#editor");
+            this.stage = $("#stage");
+            this.loader = $("#loader");
+            this.apiRoot = "http://www.corrasable.com/phonemes";
+
+            Phonemes.start();
           }
         };
 
