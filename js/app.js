@@ -54,7 +54,7 @@
     },
 
     initialize: function() {
-      this.apiRoot       = "http://www.corrasable.com/phonemes";
+      this.apiRoot       = "http://api.corrasable.com/phonemes";
       this.$editor       = $("#editor");
       this.$output       = $("#output");
       this.wordSeparator = " &hellip; ";
