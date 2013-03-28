@@ -50,6 +50,7 @@
         $.ajax({
           url: context.apiRoot,
           method: "POST",
+          dataType: "json",
           data: { text: message }
         }).done(function(response) {
           var fragment = context.wrap(response.text.split("|"));
