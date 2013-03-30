@@ -35,7 +35,7 @@
     },
 
     wrap: function(words) {
-      return _.map(words, function(word){ return "<span class='word'>" + word.trim() + "</span>"; });
+      return _.map(words, function(word){ return "<span class='word'>" + word + "</span>"; });
     },
 
     update: function() {
@@ -53,8 +53,11 @@
           dataType: "json",
           data: { text: message }
         }).done(function(response) {
-          var fragment = context.wrap(response.text.split("|"));
-          context.$output.html(fragment.join(context.wordSeparator));
+          var fragment = _.map(response, function(line) {
+            return context.wrap(line).join(context.wordSeparator) + "<br>";
+          });
+
+          context.$output.html(fragment);
         }).error(function(response){
           context.$output.html("ERROR");
         }).complete(function(){
